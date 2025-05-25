@@ -31,3 +31,17 @@ label_encoder = LabelEncoder()
 for col in cat_cols:
     data[col] = label_encoder.fit_transform(data[col])
 
+print(data['stroke'].value_counts())
+
+sampler = SMOTE(random_state=1)
+X = data.drop(columns=['stroke'])
+y = data['stroke']
+
+X, y = sampler.fit_resample(X, y.values)
+y = pd.DataFrame({'stroke': y})
+
+data = pd.concat([X, y], axis=1).sample(frac=1)
+print(data['stroke'].value_counts())
+print(data.shape)
+
+data.to_csv('data/smote_patients_info.csv', index=False)
