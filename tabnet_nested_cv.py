@@ -2,8 +2,7 @@ import numpy as np
 import pandas as pd
 from pytorch_tabnet.tab_model import TabNetClassifier
 from sklearn.model_selection import StratifiedKFold
-from sklearn.metrics import roc_auc_score
-from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import roc_auc_score, precision_recall_curve, f1_score, classification_report, confusion_matrix
 from itertools import product
 import logging
 from datetime import datetime
@@ -132,11 +131,11 @@ y_test = test_data['stroke']
 
 param_grid = {
     'n_d': [16, 32],
-    'n_steps': [3],  # 5],
-    'cat_emb_dim': [1, 3],
-    'gamma': [1.2],  # 1.5],
-    'lambda_sparse': [1e-3],  # 1e-4],
-    'optimizer_params': [{'lr': 2e-2}]  # , {'lr': 1e-2}]
+    'n_steps': [3, 5],
+    'cat_emb_dim': [1, 2, 3],
+    'gamma': [1.2, 1.5],
+    'lambda_sparse': [1e-3, 1e-4],
+    'optimizer_params': [{'lr': 3e-2}, {'lr': 1e-2}]
 }
 
 cv_runner = TabNetCVLogger(X_train, y_train, cat_cols, param_grid)
@@ -145,10 +144,20 @@ best_model.save_model("tabnet_stroke_model")
 
 print("Best AUC:", best_auc)
 print("Best Parameters:", best_params)
-
-preds = best_model.predict_proba(X_test)
+best_model = TabNetClassifier()
+best_model.load_model("tabnet_stroke_model.zip")
+preds = best_model.predict_proba(X_test.values)
 
 test_auc = roc_auc_score(y_score=preds[:, 1], y_true=y_test)
 
-# print('best valid score', best_model.best_cost)
+y_probs = preds[:, 1]
+precisions, recalls, thresholds = precision_recall_curve(y_test, y_probs)
+f1_scores = 2 * (precisions * recalls) / (precisions + recalls + 1e-10)
+best_threshold = thresholds[np.argmax(f1_scores)]
+
 print('final test score', test_auc)
+
+y_pred = (y_probs >= best_threshold).astype(int)
+
+print(classification_report(y_test, y_pred))
+print(confusion_matrix(y_test, y_pred))
