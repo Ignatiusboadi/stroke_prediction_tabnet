@@ -1,0 +1,30 @@
+2025-05-26 03:24:13 [INFO] Logging started
+2025-05-26 03:24:13 [INFO] Evaluating parameters: {'n_d': 16, 'n_steps': 3, 'cat_emb_dim': 1, 'gamma': 1.2, 'lambda_sparse': 0.001, 'optimizer_params': {'lr': 0.02}}
+2025-05-26 03:24:53 [INFO] Fold 1: AUC = 0.9294
+2025-05-26 03:25:34 [INFO] Fold 2: AUC = 0.9448
+2025-05-26 03:26:07 [INFO] Fold 3: AUC = 0.9234
+2025-05-26 03:26:48 [INFO] Fold 4: AUC = 0.9331
+2025-05-26 03:27:30 [INFO] Fold 5: AUC = 0.9363
+2025-05-26 03:27:30 [INFO] Mean AUC for params {'n_d': 16, 'n_steps': 3, 'cat_emb_dim': 1, 'gamma': 1.2, 'lambda_sparse': 0.001, 'optimizer_params': {'lr': 0.02}}: 0.9334
+2025-05-26 03:27:30 [INFO] Evaluating parameters: {'n_d': 16, 'n_steps': 3, 'cat_emb_dim': 3, 'gamma': 1.2, 'lambda_sparse': 0.001, 'optimizer_params': {'lr': 0.02}}
+2025-05-26 03:28:06 [INFO] Fold 1: AUC = 0.9338
+2025-05-26 03:28:32 [INFO] Fold 2: AUC = 0.9453
+2025-05-26 03:29:06 [INFO] Fold 3: AUC = 0.9364
+2025-05-26 03:29:47 [INFO] Fold 4: AUC = 0.9373
+2025-05-26 03:30:29 [INFO] Fold 5: AUC = 0.9424
+2025-05-26 03:30:29 [INFO] Mean AUC for params {'n_d': 16, 'n_steps': 3, 'cat_emb_dim': 3, 'gamma': 1.2, 'lambda_sparse': 0.001, 'optimizer_params': {'lr': 0.02}}: 0.9390
+2025-05-26 03:30:29 [INFO] Evaluating parameters: {'n_d': 32, 'n_steps': 3, 'cat_emb_dim': 1, 'gamma': 1.2, 'lambda_sparse': 0.001, 'optimizer_params': {'lr': 0.02}}
+2025-05-26 03:31:11 [INFO] Fold 1: AUC = 0.9359
+2025-05-26 03:31:45 [INFO] Fold 2: AUC = 0.9431
+2025-05-26 03:32:41 [INFO] Fold 3: AUC = 0.9386
+2025-05-26 03:33:23 [INFO] Fold 4: AUC = 0.9446
+2025-05-26 03:34:06 [INFO] Fold 5: AUC = 0.9499
+2025-05-26 03:34:06 [INFO] Mean AUC for params {'n_d': 32, 'n_steps': 3, 'cat_emb_dim': 1, 'gamma': 1.2, 'lambda_sparse': 0.001, 'optimizer_params': {'lr': 0.02}}: 0.9424
+2025-05-26 03:34:06 [INFO] Evaluating parameters: {'n_d': 32, 'n_steps': 3, 'cat_emb_dim': 3, 'gamma': 1.2, 'lambda_sparse': 0.001, 'optimizer_params': {'lr': 0.02}}
+2025-05-26 03:34:41 [INFO] Fold 1: AUC = 0.9392
+2025-05-26 03:35:10 [INFO] Fold 2: AUC = 0.9439
+2025-05-26 03:35:51 [INFO] Fold 3: AUC = 0.9396
+2025-05-26 03:36:24 [INFO] Fold 4: AUC = 0.9325
+2025-05-26 03:37:01 [INFO] Fold 5: AUC = 0.9394
+2025-05-26 03:37:01 [INFO] Mean AUC for params {'n_d': 32, 'n_steps': 3, 'cat_emb_dim': 3, 'gamma': 1.2, 'lambda_sparse': 0.001, 'optimizer_params': {'lr': 0.02}}: 0.9389
+2025-05-26 03:37:01 [INFO] Best AUC: 0.9424 with params: {'n_d': 32, 'n_steps': 3, 'cat_emb_dim': 1, 'gamma': 1.2, 'lambda_sparse': 0.001, 'optimizer_params': {'lr': 0.02}}
