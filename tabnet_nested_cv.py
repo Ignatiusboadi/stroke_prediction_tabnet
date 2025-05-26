@@ -16,7 +16,7 @@ class TabNetCVLogger:
     with logging and tracking per fold.
     """
 
-    def __init__(self, X, y, cat_cols, param_grid, n_splits=3, log_dir="logs"):
+    def __init__(self, X, y, cat_cols, param_grid, n_splits=5, log_dir="logs"):
         """
         Initializes the cross-validation wrapper with logging support.
 
@@ -91,7 +91,7 @@ class TabNetCVLogger:
                     X_train, y_train,
                     eval_set=[(X_val, y_val)],
                     eval_name=['valid'],
-                    max_epochs=100,
+                    max_epochs=50,
                     patience=10,
                     batch_size=256,
                     virtual_batch_size=64,
@@ -118,28 +118,37 @@ class TabNetCVLogger:
 
 
 patients_data = pd.read_csv('data/smote_patients_info.csv')
-patients_data['Set'] = np.random.choice(['train', 'valid', 'test'], p=[0.8, 0.1, 0.1], size=[patients_data.shape[0]])
+patients_data['Set'] = np.random.choice(['train', 'test'], p=[0.9, 0.1], size=[patients_data.shape[0]])
 
 cat_cols = ["gender", "hypertension", "heart_disease", "ever_married", "work_type", "Residence_type", "smoking_status"]
-for col in cat_cols:
-    le = LabelEncoder()
-    patients_data[col] = le.fit_transform(patients_data[col].astype(str))
 
 train_data = patients_data.query('`Set` == "train"').drop(columns=['Set'])
-X = train_data.drop(columns=['stroke'])
-y = train_data['stroke']
+test_data = patients_data.query('`Set` == "test"').drop(columns=['Set'])
+
+X_train = train_data.drop(columns=['stroke'])
+y_train = train_data['stroke']
+X_test = test_data.drop(columns=['stroke'])
+y_test = test_data['stroke']
 
 param_grid = {
     'n_d': [16, 32],
-    'n_steps': [3, 5],
-    'cat_emb_dim': [1, 3, 5],
-    'gamma': [1.2, 1.5],
-    'lambda_sparse': [1e-3, 1e-4],
-    'optimizer_params': [{'lr': 2e-2}, {'lr': 1e-2}]
+    'n_steps': [3],  # 5],
+    'cat_emb_dim': [1, 3],
+    'gamma': [1.2],  # 1.5],
+    'lambda_sparse': [1e-3],  # 1e-4],
+    'optimizer_params': [{'lr': 2e-2}]  # , {'lr': 1e-2}]
 }
 
-cv_runner = TabNetCVLogger(X, y, cat_cols, param_grid)
+cv_runner = TabNetCVLogger(X_train, y_train, cat_cols, param_grid)
 best_auc, best_model, best_params = cv_runner.evaluate()
+best_model.save_model("tabnet_stroke_model")
 
 print("Best AUC:", best_auc)
 print("Best Parameters:", best_params)
+
+preds = best_model.predict_proba(X_test)
+
+test_auc = roc_auc_score(y_score=preds[:, 1], y_true=y_test)
+
+# print('best valid score', best_model.best_cost)
+print('final test score', test_auc)
