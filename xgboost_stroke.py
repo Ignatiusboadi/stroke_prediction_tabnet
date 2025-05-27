@@ -1,12 +1,14 @@
+import logging
 import numpy as np
+import os
 import pandas as pd
-from xgboost import XGBClassifier
+
+from datetime import datetime
+from lime.lime_tabular import LimeTabularExplainer
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import roc_auc_score, precision_recall_curve, classification_report, confusion_matrix
 from itertools import product
-import logging
-from datetime import datetime
-import os
+from xgboost import XGBClassifier
 
 
 class XGBoostCVLogger:
@@ -114,3 +116,15 @@ print("Final Test AUC:", test_auc)
 y_pred = (preds[:, 1] >= best_threshold).astype(int)
 print(classification_report(y_test, y_pred))
 print(confusion_matrix(y_test, y_pred))
+
+
+lime_explainer = LimeTabularExplainer(
+    training_data=np.array(X_train),
+    feature_names=list(train_data.columns),
+    class_names=[1, 0],
+    mode='classification'
+)
+
+exp_0 = lime_explainer.explain_instance(data_row=X_test.iloc[2].values, predict_fn=best_model.predict_proba)
+
+print(exp_0.as_list())
