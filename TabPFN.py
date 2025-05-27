@@ -1,3 +1,4 @@
+from lime.lime_tabular import LimeTabularExplainer
 from sklearn.metrics import roc_auc_score, precision_recall_curve, classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
 from tabpfn import TabPFNClassifier
@@ -27,3 +28,14 @@ y_pred = (y_probs >= best_threshold).astype(int)
 
 print(classification_report(y_test, y_pred))
 print(confusion_matrix(y_test, y_pred))
+
+lime_explainer = LimeTabularExplainer(
+    training_data=np.array(X_train),
+    feature_names=list(patients_data.columns),
+    class_names=[1, 0],
+    mode='classification'
+)
+
+exp_0 = lime_explainer.explain_instance(data_row=X_test.iloc[2].values, predict_fn=tab_model.predict_proba)
+
+print(exp_0.as_list())
