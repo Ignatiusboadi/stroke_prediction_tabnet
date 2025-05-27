@@ -74,3 +74,43 @@ class XGBoostCVLogger:
 
         logging.info(f"Best AUC: {best_auc:.4f} with params: {best_params}")
         return best_auc, best_model, best_params
+
+
+# Load your data
+data = pd.read_csv('data/smote_patients_info.csv')
+data['Set'] = np.random.choice(['train', 'test'], p=[0.9, 0.1], size=[data.shape[0]])
+
+train_data = data.query('Set == "train"').drop(columns=['Set'])
+test_data = data.query('Set == "test"').drop(columns=['Set'])
+
+X_train = train_data.drop(columns=['stroke'])
+y_train = train_data['stroke']
+X_test = test_data.drop(columns=['stroke'])
+y_test = test_data['stroke']
+
+param_grid = {
+    'max_depth': [3, 4],
+    'learning_rate': [0.1, 0.3],
+    'n_estimators': [50, 100],
+    'alpha': [0, 10]
+}
+
+cv_runner = XGBoostCVLogger(X_train, y_train, param_grid)
+best_auc, best_model, best_params = cv_runner.evaluate()
+
+# Evaluate on test set
+preds = best_model.predict_proba(X_test.values)
+test_auc = roc_auc_score(y_score=preds[:, 1], y_true=y_test)
+
+# Optimal threshold
+precisions, recalls, thresholds = precision_recall_curve(y_test, preds[:, 1])
+f1_scores = 2 * (precisions * recalls) / (precisions + recalls + 1e-10)
+best_threshold = thresholds[np.argmax(f1_scores)]
+
+print("Best AUC (CV):", best_auc)
+print("Best Parameters:", best_params)
+print("Final Test AUC:", test_auc)
+
+y_pred = (preds[:, 1] >= best_threshold).astype(int)
+print(classification_report(y_test, y_pred))
+print(confusion_matrix(y_test, y_pred))
