@@ -1,12 +1,15 @@
+import logging
 import numpy as np
+import os
 import pandas as pd
+# import shap
+
+from lime.lime_tabular import LimeTabularExplainer
 from pytorch_tabnet.tab_model import TabNetClassifier
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import roc_auc_score, precision_recall_curve, f1_score, classification_report, confusion_matrix
 from itertools import product
-import logging
 from datetime import datetime
-import os
 
 
 class TabNetCVLogger:
@@ -137,13 +140,13 @@ param_grid = {
     'lambda_sparse': [1e-3, 1e-4],
     'optimizer_params': [{'lr': 3e-2}, {'lr': 1e-2}]
 }
-
-cv_runner = TabNetCVLogger(X_train, y_train, cat_cols, param_grid)
-best_auc, best_model, best_params = cv_runner.evaluate()
-best_model.save_model("tabnet_stroke_model")
-
-print("Best AUC:", best_auc)
-print("Best Parameters:", best_params)
+#
+# cv_runner = TabNetCVLogger(X_train, y_train, cat_cols, param_grid)
+# best_auc, best_model, best_params = cv_runner.evaluate()
+# best_model.save_model("tabnet_stroke_model")
+#
+# print("Best AUC:", best_auc)
+# print("Best Parameters:", best_params)
 best_model = TabNetClassifier()
 best_model.load_model("tabnet_stroke_model.zip")
 preds = best_model.predict_proba(X_test.values)
@@ -161,3 +164,16 @@ y_pred = (y_probs >= best_threshold).astype(int)
 
 print(classification_report(y_test, y_pred))
 print(confusion_matrix(y_test, y_pred))
+# print(best_model.feature_importances_)
+# best_model.feature_importances_
+
+lime_explainer = LimeTabularExplainer(
+    training_data=np.array(X_train),
+    feature_names=list(train_data.columns),
+    class_names=[1, 0],
+    mode='classification'
+)
+
+exp_0 = lime_explainer.explain_instance(data_row=X_test.iloc[2].values, predict_fn=best_model.predict_proba)
+
+print(exp_0.as_list())
