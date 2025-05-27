@@ -172,3 +172,14 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+.idea/
+data/PAT033.rar
+data/PAT033/
+data/PAT034.rar
+data/PAT034/
+data/PAT035.rar
+data/PAT035/
+data/archive.zip
+data/data(processed)/
+data/dicom/
+tabnet_stroke_model.zip
